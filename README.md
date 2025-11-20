@@ -1,20 +1,52 @@
 # docker-lazy
 
-A set of helper functions for Docker CLI, especially useful for managing Docker Swarm clusters across multiple contexts.
+A collection of powerful helper functions for Docker CLI, designed to simplify managing Docker Swarm clusters across multiple contexts.
 
 ## Overview
 
-Docker-lazy assumes you are using Docker contexts, grouped into namespaces to manage multiple environments. Different nodes of one cluster would be contexts in the same namespace.
+### Multi-node Context Switching
 
-For example, if you have a context named `dev-cluster.1` and another named `dev-cluster.2`, they belong to the same namespace `dev-cluster` and docker-lazy will be able to find containers across them.
+The killer feature is automatic context switching between Docker Swarm nodes while searching for containers.
+
+Managing Docker Swarm clusters typically requires SSH-ing into multiple nodes to find where a specific container is running. Docker-lazy automates this tedious process. All you need is:
+
+- [Docker Contexts](https://docs.docker.com/engine/manage-resources/contexts/) configured for your cluster
+- Multiple contexts named with a namespace pattern: `my-system.1`, `my-system.2`, ..., `my-system.N` (where each represents a Swarm node)
+- Switch to any context in the namespace to start operating with the entire cluster
+
+**Before docker-lazy:**
+
+```bash
+ssh my-system-node-1.mycompany.com
+docker ps | grep my-container  # not here
+ssh my-system-node-2.mycompany.com
+docker ps | grep my-container  # not here
+ssh my-system-node-3.mycompany.com
+docker ps | grep my-container  # finally here!
+docker exec -it <container_id> bash
+```
+
+**With docker-lazy:**
+
+```bash
+dlazy-exec my-container
+```
+
+Docker-lazy automatically searches across all nodes in the namespace, switches to the correct context, and executes a shell inside the container.
+
+### Additional Features
+
+Docker-lazy provides more time-saving commands for Docker operations. The project is actively maintained—stay tuned for new features!
 
 ## Commands
 
-- `dlazy-help` - Display help information
-- `dlazy-find <container_name>` - Find container(s) by name in the current context (partial search supported)
-- `dlazy-find-in-cluster <container_name>` - Find and switch to the context running a container with the desired name
-- `dlazy-exec <container_name>` - Exec bash (or sh as fallback) in a Docker container by name across all contexts from the same namespace
-- `dlazy-foreach-svc <filter> <action>` - Execute an action on all services matching the filter
+| Command | Description |
+|---------|-------------|
+| `dlazy-help` | Display help information and usage examples |
+| `dlazy-find <container_name>` | Find container(s) by name in the current context (supports partial matching) |
+| `dlazy-find-in-cluster <container_name>` | Search for a container across all contexts in the namespace and switch to the correct node |
+| `dlazy-exec <container_name>` | Execute bash (or sh as fallback) in a container by name, automatically finding it across cluster nodes |
+| `dlazy-foreach-svc <filter> <action>` | Execute an action on all Docker services matching the filter |
 
 ## Installation
 
@@ -65,32 +97,38 @@ source ~/.zshrc
 ## Usage Examples
 
 ### Find a container by name
+
 ```zsh
 dlazy-find myapp
+# Returns container ID(s) matching "myapp" in the current context
 ```
 
 ### Find a container across cluster contexts
+
 ```zsh
 dlazy-find-in-cluster web-server
+# Searches all nodes and switches to the context where the container is running
 ```
 
-### Execute a command in a container
+### Execute a shell in a container
+
 ```zsh
 dlazy-exec myapp
+# Finds the container across all nodes and opens an interactive shell
 ```
 
-### Perform action on multiple services
+### Perform bulk actions on services
+
 ```zsh
 dlazy-foreach-svc database rm
+# Executes 'docker service rm' for each service with "database" in its name
 ```
-
-This will execute `docker service rm` for each service containing "database" in its name.
 
 ## Requirements
 
-- Docker
+- Docker CLI installed and configured
 - Zsh shell
-- Docker contexts configured (for cluster operations)
+- Docker contexts set up with namespace pattern (e.g., `cluster.1`, `cluster.2`) for multi-node operations
 
 ## License
 
