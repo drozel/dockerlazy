@@ -23,10 +23,8 @@ For example, if you have a context named `dev-cluster.1` and another named `dev-
 Add the following to your `~/.zshrc`:
 
 ```zsh
-zinit light vitalii-kolmakov/docker-lazy
+zinit light drozel/dockerlazy
 ```
-
-Replace `vitalii-kolmakov` with your GitHub username.
 
 Then reload your shell:
 
@@ -39,10 +37,8 @@ source ~/.zshrc
 1. Clone this repository into Oh-My-Zsh's plugins directory:
 
 ```zsh
-git clone https://github.com/vitalii-kolmakov/docker-lazy.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/docker-lazy
+git clone https://github.com/drozel/dockerlazy.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/docker-lazy
 ```
-
-Replace `vitalii-kolmakov` with your GitHub username.
 
 2. Add `docker-lazy` to the plugins array in your `~/.zshrc`:
 
@@ -61,7 +57,7 @@ source ~/.zshrc
 Clone this repository and source the plugin file in your `~/.zshrc`:
 
 ```zsh
-git clone https://github.com/vitalii-kolmakov/docker-lazy.git ~/.docker-lazy
+git clone https://github.com/drozel/dockerlazy.git ~/.docker-lazy
 echo "source ~/.docker-lazy/dockerlazy.plugin.zsh" >> ~/.zshrc
 source ~/.zshrc
 ```
